@@ -10,6 +10,9 @@ export const fetchAllThreads = async () => {
     .sort({ createdAt: -1 });
 
   // Add error handling for no threads found
+  if (!threads || threads.length === 0) {
+    throw createAppError("No threads found", 404);
+  }
 
   return threads;
 };
@@ -20,6 +23,9 @@ export const fetchThreadById = async (id) => {
     .populate({ path: "subreddit" });
 
   // Add error handling for thread not found
+  if (!thread) {
+    throw createAppError("Thread not found", 404);
+  }
 
   return thread;
 };
@@ -33,6 +39,9 @@ export const createNewThread = async (title, content, author, subreddit) => {
     .populate({ path: "author", select: "name" });
 
   // Add error handling for thread creation failure
+  if (!populatedThread) {
+    throw createAppError("Failed to create thread", 500);
+  }
 
   return populatedThread;
 };
@@ -44,6 +53,9 @@ export const updateThreadById = async (id, updateData) => {
   });
 
   // Add error handling for thread not found or update failure
+  if (!updatedThread) {
+    throw createAppError("Thread not found or update failed", 404);
+  }
 
   return updatedThread;
 };
@@ -52,6 +64,9 @@ export const deleteThreadById = async (id) => {
   const deletedThread = await Thread.findByIdAndDelete(id);
 
   // Add error handling for thread not found or deletion failure
+  if (!deletedThread) {
+    throw createAppError("Thread not found or deletion failed", 404);
+  } 
 
   return deletedThread;
 };
